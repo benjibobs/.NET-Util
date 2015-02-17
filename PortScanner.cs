@@ -26,8 +26,6 @@ namespace EDITME
                 return false;
             }
 
-            return false;
-
         }
     }
 }
