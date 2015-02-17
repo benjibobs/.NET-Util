@@ -17,6 +17,8 @@ namespace EDITME
         private static int instances = 0;
         private static Main main;
 
+        private static List<IPAddress> ipsFound = new List<IPAddress>();
+
         private static Stopwatch watch = Stopwatch.StartNew();
 
         private static object @lock = new object();
@@ -29,8 +31,9 @@ namespace EDITME
 
         public static void start(Main main1)
         {
-
+            
             main = main1;
+            watch = Stopwatch.StartNew();
 
             string baseIP = "192.168.1.";
 
@@ -43,8 +46,6 @@ namespace EDITME
             byte[] data = enc.GetBytes("abababababababababababababababab");
 
             int cnt = 1;
-
-            Stopwatch watch = Stopwatch.StartNew();
 
             foreach (Ping p in pingers)
             {
@@ -74,17 +75,24 @@ namespace EDITME
             {
                 Console.WriteLine(string.Concat("Active IP: ", e.Reply.Address.ToString()));
                 result += 1;
+                ipsFound.Add(e.Reply.Address);
             }
             
             if(responses == 255)
             {
-
+                responses = 0;
                 watch.Stop();
 
                 DestroyPingers();
 
                 Console.WriteLine("Finished in {0}. Found {1} active IP-addresses.", watch.Elapsed.ToString(), result);
 
+                main.onPingComplete(ipsFound, watch.Elapsed);
+                ipsFound = new List<IPAddress>();
+                pingers = new List<Ping>();
+                result = 0;
+                instances = 0;
+                @lock = new object();
             }
 
         }
