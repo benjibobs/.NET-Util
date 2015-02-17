@@ -13,11 +13,13 @@ namespace EDITME
         public static Boolean portIsOpen(IPAddress ip, int port)
         {
 
-            TcpClient tcpClient = new TcpClient();
+            UdpClient udpClient = new UdpClient();
 
+            udpClient.Ttl = 5;
+            
             try
             {
-                tcpClient.Connect(ip.ToString(), port);
+                udpClient.Connect(ip, port);
                 // Will cast exception if that fails, therefore avoiding this
                 return true;
             }
