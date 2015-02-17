@@ -23,7 +23,7 @@ namespace EDITME
             }
             catch (Exception)
             {
-                return false
+                return false;
             }
 
             return false;
